@@ -1,5 +1,7 @@
 import shortid from "shortid";
+import stringScore from "string-score";
 
+// Add ids to our items
 function generateIds(root) {
   const id = shortid.generate();
   root.id = id;
@@ -9,15 +11,7 @@ function generateIds(root) {
   return root;
 }
 
-// function generateIds(arr) {
-//   return arr.map(item => {
-//     return {
-//       ...item,
-//       id: shortid.generate()
-//     };
-//   });
-// }
-
+// Adds `expanded` and `selected` states to our items
 function createTreeState(root) {
   Object.keys(root).forEach(key => {
     const children = root[key].children || [];
@@ -29,49 +23,83 @@ function createTreeState(root) {
   return root;
 }
 
-// function createTreeState(arr) {
-//   return arr.map(item => {
-//     if (item.children && item.children.length) {
-//       return {
-//         ...item,
-//         expanded: false
-//       };
-//     }
-//     return item;
-//   });
-// }
+// Filters tree of items by { prop: value }
+// returns a flat Array of children to be displayed
+// in our Tree component
+function filterTreeBy(obj, prop, value) {
+  const result = {
+    children: []
+  };
+  function filterChildren(obj) {
+    if (obj.children && obj.children.length) {
+      // score items
+      const scored = filterStringScore(obj.children, prop, value);
 
-// [
-//   { id: 'xyz', name: 'abc', parent: parentId, etc. },
-//   { id: 'xyz', name: 'abc', parent: parentId, etc. },
-//   { id: 'xyz', name: 'abc', parent: parentId, etc. }
-// ]
-function flattenObjectBy(root, key) {
-  const result = [];
-  function pushItems(obj) {
-    result.push(obj);
-    if (obj[key] && obj[key].length) {
-      obj[key].forEach(child => pushItems(child));
-    }
-  }
-  pushItems(root);
-  return result;
-}
+      // filter score above threshold
+      const filtered = scored.filter(child => child.score > 0.5);
 
-function normalizeObjectBy(root, key) {
-  const result = {};
-  function addItems(obj) {
-    result[obj.id] = obj;
-    if (obj[key] && obj[key].length) {
-      obj[key].forEach(child => {
-        child.parentId = obj.id;
-        addItems(child);
+      // sort by score
+      filtered.sort((a, b) => {
+        if (a.score > b.score) {
+          return 1;
+        } else if (a.score < b.score) {
+          return -1;
+        }
+        return 0;
+      });
+
+      // strip score
+      const items = filtered.map(child => child.item);
+      result.children = result.children.concat(items);
+      obj.children.forEach(child => {
+        filterChildren(child);
       });
     }
   }
-  addItems(root);
-  Object.keys(result).forEach(key => delete result[key].children);
+  filterChildren(obj);
   return result;
 }
 
-export { flattenObjectBy, normalizeObjectBy, generateIds, createTreeState };
+// Filters item property (prop) by string (value)
+// using fuzzy string search library: string-score
+function filterStringScore(arr, prop, value) {
+  return arr.map(child => {
+    if (child[prop] && typeof child[prop] === "string") {
+      const score = stringScore(child[prop], value, 0.5);
+      return {
+        item: child,
+        score
+      };
+    }
+    return false;
+  });
+}
+
+function findById(obj, id) {
+  if (obj.id === id) {
+    return obj;
+  }
+  let result, p;
+  for (p in obj) {
+    if (obj.hasOwnProperty(p) && typeof obj[p] === "object") {
+      result = findById(obj[p], id);
+      if (result) {
+        return result;
+      }
+    }
+  }
+}
+
+// recursively sets the property of all items
+function setAllChildren(obj, prop, value) {
+  const copy = { ...obj };
+  obj[prop] = value;
+  if (copy.children && obj.children.length) {
+    copy.children.forEach(child => {
+      setAllChildren(child, prop, value);
+    });
+  }
+  return copy;
+}
+
+export { generateIds, createTreeState, filterTreeBy, findById, setAllChildren };
