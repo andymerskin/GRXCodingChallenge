@@ -10,8 +10,10 @@ import fileTreeData from "data/data";
 import { filterTreeBy, findById, setAllChildren } from "data/utils";
 
 function App() {
+  // setup global File Data Tree state
   const [fileData, updateFileData] = useImmer(fileTreeData);
 
+  // Expands/collapses item
   function toggleItemExpanded(id) {
     updateFileData(draft => {
       const item = findById(draft, id);
@@ -19,6 +21,7 @@ function App() {
     });
   }
 
+  // Sets the selected item
   function setItemSelected(id) {
     updateFileData(draft => {
       setAllChildren(draft, "selected", false);
@@ -27,6 +30,7 @@ function App() {
     });
   }
 
+  // Filter items with <FilterInput>
   function handleFilterChange(value) {
     updateFileData(() => {
       if (value.length) {
@@ -36,6 +40,7 @@ function App() {
     });
   }
 
+  // Pass Immer producers in context
   const context = {
     toggleItemExpanded,
     setItemSelected
