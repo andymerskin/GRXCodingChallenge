@@ -1,0 +1,43 @@
+// App icons sprite
+// (using naming conventions akin to FontAwesome)
+
+.icon {
+  display: inline-block;
+  background: url('~assets/icon-sprite.png');
+  background-repeat: no-repeat;
+  width: 14px;
+  height: 14px;
+}
+
+// Since our icons are consistently 14px in size,
+// generate classes from the names above. This allows
+// us to add more icons later, if needed.
+$size: 14px;
+$icons:
+  folder
+  folder-private
+  file
+  times
+  plus-box-black
+  minus-box-black
+  plus-box-white
+  minus-box-white;
+  
+// format: .i-{name}
+@for $i from 1 through length($icons) {
+  $name: nth($icons, $i);
+  $n: $i - 1;
+
+  .i-#{$name} {
+    background-position-x: ($n * $size * -1);
+  }
+}
+
+// Correct 1px offset for centering
+.i-times,
+.i-plus-box-black,
+.i-minus-box-black,
+.i-plus-box-white,
+.i-minus-box-white {
+  background-position-y: 1px;
+}

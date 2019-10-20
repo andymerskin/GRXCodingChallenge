@@ -1,0 +1,35 @@
+@import 'variables';
+@import 'spacing';
+@import 'type';
+@import 'shadows';
+@import 'icons';
+@import 'buttons';
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: $gray-200;
+  font-size: 14px;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+
+button {
+  display: inline-block;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  line-height: 1;
+  background: none;
+  appearance: none;
+  cursor: pointer;
+  outline: none; // not accessible, use other means
+}

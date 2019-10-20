@@ -1,0 +1,55 @@
+// Generate spacing classes, e.g.:
+//
+// .m-0 { margin: 0 };
+// .px-4 { padding-left: 1rem; padding-right: 1rem; };
+// etc.
+//
+// (While nested loops are usually unfavorable, this
+// covers all the bases with what Sass has to offer
+// and gives us a great set of utilities to use)
+
+$margin: (
+  m: margin,
+  mt: margin-top,
+  ml: margin-left,
+  mr: margin-right,
+  mb: margin-bottom,
+  mx: margin-left margin-right,
+  my: margin-top margin-bottom,
+);
+
+$padding: (
+  p: padding,
+  pt: padding-top,
+  pl: padding-left,
+  pr: padding-right,
+  pb: padding-bottom,
+  px: padding-left padding-right,
+  py: padding-top padding-bottom,
+);
+
+$dimensions: (
+  w: width,
+  h: height
+);
+
+$propMaps: $margin, $padding, $dimensions;
+
+// spacer: size
+@each $n, $size in $sizes {
+  // each property group
+  // margin, padding, height, weight...
+  @each $map in $propMaps {
+    // each prefix
+    // m : margin, p: padding...
+    @each $prefix, $props in $map {
+      .#{$prefix}-#{$n} {
+        // each property
+        // mx: margin-top, margin-bottom...
+        @each $prop in $props {
+          #{$prop}: $size;
+        }
+      }
+    }
+  }
+}
