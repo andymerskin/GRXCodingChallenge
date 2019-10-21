@@ -13,6 +13,7 @@
     - allows us to key off of `id` when we map and render each item
 - Also added initial `selected` and `expanded` states to each item so React is aware of them, and so each are included when **exporting** the file tree.
 - Created a generic `<Tree>` component with `<TreeItem>`s that use `<Tree>` internally in order to recurse the children.
+- Double click a folder to expand/collapse, or use the expander icon.
 
 #### Other potential routes
 I considered normalizing / flattening the file data to make state updates and additions easier. Managing a flat hash table is much easier than nested structures.
